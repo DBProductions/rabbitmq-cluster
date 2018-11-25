@@ -1,0 +1,38 @@
+version: '3.2'
+services:
+  rabbitmq1:
+    build: .
+    hostname: rabbitmq1
+    ports:  
+    - "5672:5672"
+    - "15672:15672"
+    environment: {
+      RABBITMQ_DEFAULT_USER: "rabbit",
+      RABBITMQ_DEFAULT_PASS: "rabbit",
+      RABBITMQ_DEFAULT_VHOST: "vhost",
+      RABBITMQ_ERLANG_COOKIE: "erlang cookie"
+    }
+  rabbitmq2:
+    build: .
+    hostname: rabbitmq2
+    ports:
+    - "5673:5672"
+    - "15673:15672"
+    environment: {
+      RABBITMQ_DEFAULT_USER: "rabbit",
+      RABBITMQ_DEFAULT_PASS: "rabbit",
+      RABBITMQ_DEFAULT_VHOST: "vhost",
+      RABBITMQ_ERLANG_COOKIE: "erlang cookie"
+    }
+  rabbitmq3:
+    build: .
+    hostname: rabbitmq3
+    ports:
+    - "5674:5672"
+    - "15674:15672"
+    environment: {
+      RABBITMQ_DEFAULT_USER: "rabbit",
+      RABBITMQ_DEFAULT_PASS: "rabbit",
+      RABBITMQ_DEFAULT_VHOST: "vhost",
+      RABBITMQ_ERLANG_COOKIE: "erlang cookie"
+    }
