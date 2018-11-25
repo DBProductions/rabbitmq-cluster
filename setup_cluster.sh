@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # cluster 2 to 1
 docker-compose exec rabbitmq2 rabbitmqctl stop_app
 docker-compose exec rabbitmq2 rabbitmqctl join_cluster rabbit@rabbitmq1

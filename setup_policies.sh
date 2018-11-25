@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # dead letter exchange
 config='{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.events"}'
 docker-compose exec rabbitmq1 rabbitmqctl set_policy -p vhost ha-events ".\.events" "${config}" --priority 2 --apply-to queues

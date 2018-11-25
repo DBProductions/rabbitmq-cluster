@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # exchanges
 docker-compose exec rabbitmq1 rabbitmqadmin -u rabbit -p rabbit -V vhost declare exchange name=events type=topic
 docker-compose exec rabbitmq1 rabbitmqadmin -u rabbit -p rabbit -V vhost declare exchange name=dlx.events type=topic

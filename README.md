@@ -1,7 +1,7 @@
 # RabbitMQ
 
 This repository gives the possibility to play around with RabbitMQ.  
-Should helps to understand how clustering and mirroring works.  
+Should helps to understand how clustering works.  
 
 # Docker
 
@@ -10,11 +10,14 @@ The admin user (rabbit) and password (rabbit) are on all nodes the same.
 
     $ docker-compose up
 
+The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.
+
 # Scripts
 
-A collection of scripts use rabbitmqadmin, rabbitmqctl and curl to create Cluster, Exchanges, Queues, Bindings, Policies, User and publish a message.
+A collection of scripts use rabbitmqadmin, rabbitmqctl and curl to create Cluster, Exchanges, Queues, Bindings, Policies, User and publish a message. All scripts are executed on `rabbitmq1`.
 
-`setup_cluster.sh` let rabbitmq2 and rabbitmq3 join rabbitmq1 as cluster.  
+### setup_cluster.sh 
+Let rabbitmq2 and rabbitmq3 join rabbitmq1 as cluster.  
 
     $ ./setup_cluster.sh
     Stopping rabbit application on node rabbit@rabbitmq2 ...
@@ -26,7 +29,8 @@ A collection of scripts use rabbitmqadmin, rabbitmqctl and curl to create Cluste
     Starting node rabbit@rabbitmq3 ...
     completed with 9 plugins.
 
-`setup_user.sh` add user and set permissions.  
+### setup_user.sh
+Add user and set permissions.  
 
     $ ./setup_user.sh
     Adding user "consumer" ...
@@ -36,7 +40,8 @@ A collection of scripts use rabbitmqadmin, rabbitmqctl and curl to create Cluste
 
 The user and password are the same!  
 
-`setup_topology.sh` add exchanges, queues and bindings.  
+### setup_topology.sh
+Add exchanges, queues and bindings.  
 
     $ ./setup_topology.sh
     exchange declared
@@ -52,13 +57,15 @@ The topology is a simple event system with a 'dead-letter' configuration.
 
 ![Topology](./topology.png?raw=true "Topology")
 
-`setup_policies.sh` set policies for exchanges and queues.  
+### setup_policies.sh
+Set policies for exchanges and queues.  
 
     $ ./setup_policies.sh
     Setting policy "ha-events" for pattern ".\.events" to "{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.events"}" with priority "2" for vhost "vhost" ...
     Setting policy "ha-lazy" for pattern "^(?!amq\.).+" to "{"queue-mode":"lazy", "ha-mode":"all", "ha-sync-mode":"automatic"}" with priority "1" for vhost "vhost" ...
 
-`publish_message.sh` publish a message
+### publish_message.sh
+Publish a message.
 
     $ ./publish_message.sh
     {"routed":true}
