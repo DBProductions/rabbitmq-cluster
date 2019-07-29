@@ -5,4 +5,7 @@ routing_key='"routing_key": "user.create.account"'
 data='"{\"name\":\"RabbitMQ\"}"'
 payload='{'"$properties"', '"$routing_key"', "payload":'"$data"', "payload_encoding":"string"}'
 
-curl -H "content-type:application/json" -X POST -d "${payload}" http://rabbit:rabbit@localhost:15672/api/exchanges/vhost/events/publish
+for i in {1..5}
+do
+  curl -H "content-type:application/json" -X POST -d "${payload}" http://rabbit:rabbit@localhost:15672/api/exchanges/vhost/events/publish
+done
