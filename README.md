@@ -151,6 +151,34 @@ The topology is a simple event system with a `dead-letter` configuration.
 
 ![Topology](./topology.png?raw=true "Topology")
 
+### setup_retry_dlx_topology.sh
+Add exchanges, queues and bindings to create a DLX retry topology.  
+When a message gets rejected and a dead letter exchange is defined for the queue the message is forwarded to the defined exchange.  
+The dead letter exchange is bind to a queue where all rejected messages arrive, this queue have a `x-message-ttl` defined.  
+Additional to the TTL the queue have also a dead-letter-exchange defined, when the TTL is over the messages are forwarded to this exchange.  
+From the second exchange the messages are routed again to the queue where they have been rejected.  
+
+For this retry topology we need two additional exchanges and a queue to let the messages wait before they get routed again.  
+TTL is a constant delay for all messages to retry and RabbitMQ counts each time a message is dead-lettered and set it as count field on the `x-death` header.  
+
+    $ ./scripts/setup_retry_topology.sh
+    exchange declared
+    exchange declared
+    exchange declared
+    queue declared
+    queue declared
+    binding declared
+    binding declared
+    binding declared
+    binding declared
+    binding declared
+    binding declared
+    binding declared
+    Setting policy "ha-events" for pattern ".\.events" to "{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.events"}" with priority "2" for vhost "vhost" ...
+    Setting policy "ha-retry-events" for pattern "dead-events" to "{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.retry"}" with priority "2" for vhost "vhost" ...
+
+![Reject DLX Retry](./retry-dlx.png?raw=true "Reject DLX Retry")
+
 ### setup_policies.sh
 Set policies for exchanges and queues.  
 
