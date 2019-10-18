@@ -134,23 +134,6 @@ Add user and set permissions.
 The user and password are the same!  
 Permissions are set for separating read and write access.  
 
-### setup_topology.sh
-Add exchanges, queues and bindings.  
-
-    $ ./scripts/setup_topology.sh
-    exchange declared
-    exchange declared
-    queue declared
-    queue declared
-    binding declared
-    binding declared
-    binding declared
-    binding declared
-
-The topology is a simple event system with a `dead-letter` configuration.  
-
-![Topology](./topology.png?raw=true "Topology")
-
 ### setup_retry_dlx_topology.sh
 Add exchanges, queues and bindings to create a DLX retry topology.  
 When a message gets rejected and a dead letter exchange is defined for the queue the message is forwarded to the defined exchange.  
