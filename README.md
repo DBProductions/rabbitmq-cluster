@@ -13,8 +13,7 @@ The used vhost is simple named `vhost`, the admin user (`rabbit`) and password (
 
 The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.  
 Prometheus is available under `http://localhost:9090/` and Grafana serves here `http://localhost:3000/`.  
-For Grafana the `admin` password is simple `admin`.  
-Some community built dashboards are included.  
+For Grafana the `admin` password is simple `password`. Some community built dashboards are included.  
 
 Enabled plugins:  
  - rabbitmq_mqtt  
