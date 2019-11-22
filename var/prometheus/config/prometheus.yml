@@ -1,0 +1,24 @@
+global:
+  scrape_interval:     5s
+  evaluation_interval: 5s
+
+  external_labels:
+      monitor: 'rabbitmq-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'rabbitmq1'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['rabbitmq1:15692']
+  - job_name: 'rabbitmq2'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['rabbitmq2:15692']
+  - job_name: 'rabbitmq3'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['rabbitmq3:15692']

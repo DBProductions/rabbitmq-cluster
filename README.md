@@ -6,11 +6,15 @@ Should help to understand how Clustering, Federation- and Shovel-Plugin are work
 # Docker
 
 The `docker-compose` file contains three RabbitMQ services `rabbitmq1`, `rabbitmq2` and `rabbitmq3`.  
+Additional Prometheus is defined to monitor the RabbitMQ instances and Grafana to display the stats.  
 The used vhost is simple named `vhost`, the admin user (`rabbit`) and password (`rabbit`) are on all nodes the same.  
 
     $ docker-compose up --build
 
-The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.
+The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.  
+Prometheus is available under `http://localhost:9090/` and Grafana serves here `http://localhost:3000/`.  
+For Grafana the `admin` password is simple `admin`.  
+Some community built dashboards are included.  
 
 Enabled plugins:  
  - rabbitmq_mqtt  
@@ -19,6 +23,7 @@ Enabled plugins:
  - rabbitmq_stomp  
  - rabbitmq_shovel  
  - rabbitmq_shovel_management  
+ - rabbitmq_prometheus  
 
 # Scripts
 
