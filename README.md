@@ -15,6 +15,10 @@ The management UIs can be found under `http://localhost:15672`, `http://localhos
 Prometheus is available under `http://localhost:9090/` and Grafana serves here `http://localhost:3000/`.  
 For Grafana the `admin` password is simple `password`. Some community built dashboards are included.  
 
+When you face problems with the Grafana login you can set a password like this.
+
+    $ docker exec -it <name of grafana container> grafana-cli admin reset-admin-password <fill in password>
+
 Enabled plugins:  
  - rabbitmq_mqtt  
  - rabbitmq_federation  
@@ -33,7 +37,8 @@ Instead of joining a cluster, we have three broker and want to connect them.
 On `rabbitmq1` we create a exchange, two queues, a binding and add two upstreams.  
 `rabbitmq2` and `rabbitmq3` we create a user used to connect with the upstreams.  
 This upstreams are connecting to `rabbitmq2` and `rabbitmq3` after the policies are applied on `rabbitmq1`.  
-The federated exchange links to the upstream exchange, published messages to `rabbitmq2` will be copied to `rabbitmq1`.
+
+The federated exchange links to the upstream exchange, published messages to `rabbitmq2` will be copied to `rabbitmq1`.  
 The federated queue links to the upstream queue and will retrieve messages from `rabbitmq3` when a consumer is connected on `rabbitmq1`.  
 The running federation links can called over the API: `http://localhost:15672/api/federation-links`
 
@@ -59,6 +64,7 @@ The running federation links can called over the API: `http://localhost:15672/ap
 Instead of joining a cluster, we have three broker and want to connect them.  
 On all three broker we create a queue named `shovel`, on `rabbitmq1` and `rabbitmq2` we create a dynamic shovel.  
 `rabbitmq2` have a additional exchange named `rabbitmq1.shovel` bind to the `shovel` queue on `rabbitmq2`.  
+
 The queue on `rabbitmq1` is the source for the exchange on `rabbitmq2` and the queue on `rabbitmq2` is then the source for the queue on `rabbitmq3`.  
 Every message published to `shovel` on `rabbitmq1` is shovelled to the exchange `rabbitmq1.shovel` on `rabbitmq2` then finally shovelled from the `shovel` queue on `rabbitmq2` to the `shovel` queue on `rabbitmq3`.
 
@@ -112,6 +118,20 @@ The `shovel` queue on `rabbitmq1` shovels messages to the exchange `rabbitmq1.sh
     binding declared
     Setting runtime parameter "shovel" for component "rabbitmq2" to "{"src-protocol": "amqp091", "src-uri": "amqp://teamA:teamA@rabbitmq1:5672/vhost", "src-queue": "shovel", "dest-protocol": "amqp091", "dest-uri": "amqp://teamB:teamB@rabbitmq2:5672/vhost", "dest-exchange": "rabbitmq1.shovel"}" in vhost "vhost" ...
 
+## backup_instance.sh and import_definitions.sh
+To keep the changes to the single instances, it's simple to export the current definitions.  
+This definitions can be adjusted in JSON format and imported again.
+
+    $ ./scripts/backup_instance.sh
+    Exported definitions for localhost to "./export/rabbitmq1.json"  
+    Exported definitions for localhost to "./export/rabbitmq2.json"  
+    Exported definitions for localhost to "./export/rabbitmq3.json"  
+
+    $ ./scripts/import_definitions.sh
+    Uploaded definitions from "localhost" to ./export/rabbitmq1.json. The import process may take some time. Consult server logs to track progress.  
+    Uploaded definitions from "localhost" to ./export/rabbitmq2.json. The import process may take some time. Consult server logs to track progress.  
+    Uploaded definitions from "localhost" to ./export/rabbitmq3.json. The import process may take some time. Consult server logs to track progress.  
+
 ## setup_cluster.sh 
 Let `rabbitmq2` and `rabbitmq3` join `rabbitmq1` as cluster.  
 When Shovel or Federation is used before the cluster will not work like expected!  
@@ -148,7 +168,7 @@ From the second exchange the messages are routed again to the queue where they h
 For this retry topology we need two additional exchanges and a queue to let the messages wait before they get routed again.  
 TTL is a constant delay for all messages to retry and RabbitMQ counts each time a message is dead-lettered and set it as count field on the `x-death` header.  
 
-    $ ./scripts/setup_retry_topology.sh
+    $ ./scripts/setup_retry_dlx_topology.sh
     exchange declared
     exchange declared
     exchange declared
