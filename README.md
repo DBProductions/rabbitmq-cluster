@@ -118,7 +118,7 @@ The `shovel` queue on `rabbitmq1` shovels messages to the exchange `rabbitmq1.sh
     binding declared
     Setting runtime parameter "shovel" for component "rabbitmq2" to "{"src-protocol": "amqp091", "src-uri": "amqp://teamA:teamA@rabbitmq1:5672/vhost", "src-queue": "shovel", "dest-protocol": "amqp091", "dest-uri": "amqp://teamB:teamB@rabbitmq2:5672/vhost", "dest-exchange": "rabbitmq1.shovel"}" in vhost "vhost" ...
 
-## backup_instance.sh and import_definitions.sh
+### backup_instance.sh and import_definitions.sh
 To keep the changes to the single instances, it's simple to export the current definitions.  
 This definitions can be adjusted in JSON format and imported again.
 
@@ -132,7 +132,7 @@ This definitions can be adjusted in JSON format and imported again.
     Uploaded definitions from "localhost" to ./export/rabbitmq2.json. The import process may take some time. Consult server logs to track progress.  
     Uploaded definitions from "localhost" to ./export/rabbitmq3.json. The import process may take some time. Consult server logs to track progress.  
 
-## setup_cluster.sh 
+### setup_cluster.sh 
 Let `rabbitmq2` and `rabbitmq3` join `rabbitmq1` as cluster.  
 When Shovel or Federation is used before the cluster will not work like expected!  
 
@@ -198,3 +198,30 @@ Publish a message.
 
     $ ./scripts/publish_message.sh
     {"routed":true}
+
+## rabbitmq-perf-test
+
+    wget https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.11.0/rabbitmq-perf-test-2.11.0-bin.zip
+    unzip rabbitmq-perf-test-2.11.0-bin.zip
+    cd rabbitmq-perf-test-2.11.0/
+
+Runs it against the cluster.
+
+    bin/runjava com.rabbitmq.perf.PerfTest -h amqp://rabbit:rabbit@localhost:5672/vhost
+
+Runs a single publisher and two consumers using a queue named `perf-test`.
+
+    bin/runjava com.rabbitmq.perf.PerfTest -x 1 -y 2 -u "perf-test" -h amqp://rabbit:rabbit@localhost:5672/vhost
+
+With a benchmark specification file `publish-consume-spec.js` this command creates `publish-consume-result.js`.  
+This file can be used to display a graph on a HTML page. [More details](https://github.com/rabbitmq/rabbitmq-perf-test/blob/master/html/README.md)
+
+    bin/runjava com.rabbitmq.perf.PerfTestMulti ../var/rabbitmq/benchmarks/publish-consume-spec.js ../var/rabbitmq/results/publish-consume-result.js
+
+To see the result, change to the results directory and start a web server.
+
+    cd ../var/rabbitmq/results/
+    python3 -m http.server 8888
+
+## Feedback
+Star this repo if you found it useful. Use the github issue tracker to give feedback on this repo.
