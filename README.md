@@ -1,6 +1,6 @@
 # RabbitMQ
 
-This repository gives the possibility to play around with RabbitMQ.  
+This repository gives the possibility to play around with RabbitMQ 3.9.8.  
 Should help to understand how Clustering, Federation- and Shovel-Plugin are working.  
 
 # Docker
@@ -27,6 +27,7 @@ Enabled plugins:
  - rabbitmq_shovel  
  - rabbitmq_shovel_management  
  - rabbitmq_prometheus  
+ - rabbitmq_stream  
 
 # Scripts
 
@@ -63,7 +64,7 @@ The running federation links can called over the API: `http://localhost:15672/ap
 ### setup_shovel.sh
 Instead of joining a cluster, we have three broker and want to connect them.  
 On all three broker we create a queue named `shovel`, on `rabbitmq1` and `rabbitmq2` we create a dynamic shovel.  
-`rabbitmq2` have a additional exchange named `rabbitmq1.shovel` bind to the `shovel` queue on `rabbitmq2`.  
+`rabbitmq2` have an additional exchange named `rabbitmq1.shovel` bind to the `shovel` queue on `rabbitmq2`.  
 
 The queue on `rabbitmq1` is the source for the exchange on `rabbitmq2` and the queue on `rabbitmq2` is then the source for the queue on `rabbitmq3`.  
 Every message published to `shovel` on `rabbitmq1` is shovelled to the exchange `rabbitmq1.shovel` on `rabbitmq2` then finally shovelled from the `shovel` queue on `rabbitmq2` to the `shovel` queue on `rabbitmq3`.
@@ -201,9 +202,9 @@ Publish a message.
 
 ## rabbitmq-perf-test
 
-    wget https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.11.0/rabbitmq-perf-test-2.11.0-bin.zip
-    unzip rabbitmq-perf-test-2.11.0-bin.zip
-    cd rabbitmq-perf-test-2.11.0/
+    wget https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.15.0/rabbitmq-perf-test-2.15.0-bin.zip
+    unzip rabbitmq-perf-test-2.15.0-bin.zip
+    cd rabbitmq-perf-test-2.15.0/
 
 Runs it against the cluster.
 

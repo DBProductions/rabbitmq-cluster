@@ -5,30 +5,36 @@ services:
     hostname: rabbitmq1
     ports:  
     - "5672:5672"
+    - "5552:5552"
     - "15672:15672"
     - "15692:15692"
     volumes:
       - ./var/rabbitmq:/export
+      - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
     env_file: .env
   rabbitmq2:
     build: ./var/rabbitmq
     hostname: rabbitmq2
     ports:
     - "5673:5672"
+    - "5553:5552"
     - "15673:15672"
     - "15693:15692"
     volumes:
       - ./var/rabbitmq:/export
+      - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
     env_file: .env
   rabbitmq3:
     build: ./var/rabbitmq
     hostname: rabbitmq3
     ports:
     - "5674:5672"
+    - "5554:5552"
     - "15674:15672"
     - "15694:15692"
     volumes:
       - ./var/rabbitmq:/export
+      - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
     env_file: .env
   prometheus:
     image: prom/prometheus:v2.1.0
