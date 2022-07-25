@@ -1,3 +1,5 @@
 *.DS_Store
+*.terraform.lock.hcl
+.terragrunt-cache/
 var/data/**
 rabbitmq-perf-test-*/

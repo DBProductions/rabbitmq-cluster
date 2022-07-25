@@ -1,6 +1,6 @@
 # RabbitMQ
 
-This repository gives the possibility to play around with RabbitMQ 3.9.8.  
+This repository gives the possibility to play around with RabbitMQ 3.9.20.  
 Should help to understand how Clustering, Federation- and Shovel-Plugin are working.  
 
 # Docker
@@ -11,13 +11,18 @@ The used vhost is simple named `vhost`, the admin user (`rabbit`) and password (
 
     $ docker-compose up --build
 
-The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.  
-Prometheus is available under `http://localhost:9090/` and Grafana serves here `http://localhost:3000/`.  
-For Grafana the `admin` password is simple `password`. Some community built dashboards are included.  
+This will start all services defined in the compose file.
 
-When you face problems with the Grafana login you can set a password like this.
+The following services are defined:
+ - rabbitmq1
+ - rabbitmq2
+ - rabbitmq3
+ - prometheus
+ - grafana
 
-    $ docker exec -it <name of grafana container> grafana-cli admin reset-admin-password <fill in password>
+In case you only want to have two instance without monitoring it can be started like this.
+
+    $ docker-compose up rabbitmq1 rabbitmq2 --build
 
 Enabled plugins:  
  - rabbitmq_mqtt  
@@ -28,6 +33,14 @@ Enabled plugins:
  - rabbitmq_shovel_management  
  - rabbitmq_prometheus  
  - rabbitmq_stream  
+
+The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.  
+Prometheus is available under `http://localhost:9090/` and Grafana serves here `http://localhost:3000/`.  
+For Grafana the `admin` password is simple `password`. Some community built dashboards are included.  
+
+When you face problems with the Grafana login you can set a password like this.
+
+    $ docker exec -it <name of grafana container> grafana-cli admin reset-admin-password <fill in password>
 
 # Scripts
 
@@ -44,22 +57,6 @@ The federated queue links to the upstream queue and will retrieve messages from 
 The running federation links can called over the API: `http://localhost:15672/api/federation-links`
 
     $ ./scripts/setup_federation.sh
-    Adding user "federal" ...
-    Setting permissions for user "federal" in vhost "vhost" ...
-    Adding user "federal" ...
-    Setting permissions for user "federal" in vhost "vhost" ...
-    exchange declared
-    queue declared
-    queue declared
-    binding declared
-    Setting runtime parameter "federation-upstream" for component "rabbitmq2" to "{"uri": "amqp://federal:federal@rabbitmq2:5672/vhost", "ack-mode":"on-confirm", "reconnect-delay": 1, "prefetch-count": 200, "max-hops": 1}" in vhost "vhost" ...
-    Setting runtime parameter "federation-upstream-set" for component "rabbitmq2" to "[{"upstream": "rabbitmq2"}]" in vhost "vhost" ...
-    Setting runtime parameter "federation-upstream" for component "rabbitmq3" to "{"uri": "amqp://federal:federal@rabbitmq3:5672/vhost", "ack-mode":"on-confirm", "reconnect-delay": 1, "prefetch-count": 200}" in vhost "vhost" ...
-    Setting runtime parameter "federation-upstream-set" for component "rabbitmq3" to "[{"upstream": "rabbitmq3"}]" in vhost "vhost" ...
-    Setting policy "federation_rabbitmq2" for pattern "rabbitmq2.federated.*" to "{"federation-upstream-set": "rabbitmq2"}" with priority "0" for vhost "vhost" ...
-    Setting policy "ha-federation" for pattern "^federation:*" to "{"ha-mode": "all"}" with priority "0" for vhost "vhost" ...
-    Setting policy "federation_rabbitmq3" for pattern "federated.*" to "{"federation-upstream-set": "rabbitmq3"}" with priority "0" for vhost "vhost" ...
-    Setting policy "ha-federation" for pattern "^federation:*" to "{"ha-mode": "all"}" with priority "0" for vhost "vhost" ...
 
 ### setup_shovel.sh
 Instead of joining a cluster, we have three broker and want to connect them.  
@@ -70,13 +67,6 @@ The queue on `rabbitmq1` is the source for the exchange on `rabbitmq2` and the q
 Every message published to `shovel` on `rabbitmq1` is shovelled to the exchange `rabbitmq1.shovel` on `rabbitmq2` then finally shovelled from the `shovel` queue on `rabbitmq2` to the `shovel` queue on `rabbitmq3`.
 
     $ ./scripts/setup_shovel.sh
-    queue declared
-    exchange declared
-    queue declared
-    binding declared
-    queue declared
-    Setting runtime parameter "shovel" for component "rabbitmq2" to "{"src-protocol": "amqp091", "src-uri": "amqp://rabbit:rabbit@rabbitmq1:5672/vhost", "src-queue": "shovel", "dest-protocol": "amqp091", "dest-uri": "amqp://rabbit:rabbit@rabbitmq2:5672/vhost", "dest-exchange": "rabbitmq1.shovel"}" in vhost "vhost" ...
-    Setting runtime parameter "shovel" for component "rabbitmq3" to "{"src-protocol": "amqp091", "src-uri": "amqp://rabbit:rabbit@rabbitmq2:5672/vhost", "src-queue": "shovel", "dest-protocol": "amqp091", "dest-uri": "amqp://rabbit:rabbit@rabbitmq3:5672/vhost", "dest-queue": "shovel"}" in vhost "vhost" ...
 
 ### setup_team.sh
 Add to `rabbitmq1` and `rabbitmq2` user and permissions for two teams.  
@@ -86,38 +76,6 @@ The two instances are connected with a federation upstream where `rabbitmq1` rec
 The `shovel` queue on `rabbitmq1` shovels messages to the exchange `rabbitmq1.shovel` on `rabbitmq2`.  
 
     $ ./scripts/setup_team.sh
-    Adding user "teamA" ...
-    Setting tags for user "teamA" to [administrator] ...
-    Adding user "teamB" ...
-    Setting tags for user "teamB" to [administrator] ...
-    Adding user "monitor" ...
-    Setting tags for user "monitor" to [monitoring] ...
-    Adding user "monitor" ...
-    Setting tags for user "monitor" to [monitoring] ...
-    Adding user "serviceA" ...
-    Adding user "serviceB" ...
-    Adding user "serviceA" ...
-    Adding user "serviceB" ...
-    Setting permissions for user "teamA" in vhost "vhost" ...
-    Setting permissions for user "teamB" in vhost "vhost" ...
-    Setting permissions for user "serviceA" in vhost "vhost" ...
-    Setting permissions for user "serviceB" in vhost "vhost" ...
-    Setting permissions for user "monitor" in vhost "vhost" ...
-    Setting permissions for user "serviceA" in vhost "vhost" ...
-    Setting permissions for user "serviceB" in vhost "vhost" ...
-    Setting permissions for user "monitor" in vhost "vhost" ...
-    exchange declared
-    queue declared
-    binding declared
-    Setting runtime parameter "federation-upstream" for component "rabbitmq2" to "{"max-hops": 1, "uri": "amqp://teamB:teamB@rabbitmq2:5672/vhost", "ack-mode":"on-publish"}" in vhost "vhost" ...
-    Setting runtime parameter "federation-upstream-set" for component "rabbitmq2" to "[{"upstream": "rabbitmq2"}]" in vhost "vhost" ...
-    Setting policy "federation_rabbitmq2" for pattern "rabbitmq2.federated.*" to "{"federation-upstream-set": "rabbitmq2"}" with priority "0" for vhost "vhost" ...
-    Setting policy "ha-federation" for pattern "^federation:*" to "{"ha-mode": "all"}" with priority "0" for vhost "vhost" ...
-    queue declared
-    exchange declared
-    queue declared
-    binding declared
-    Setting runtime parameter "shovel" for component "rabbitmq2" to "{"src-protocol": "amqp091", "src-uri": "amqp://teamA:teamA@rabbitmq1:5672/vhost", "src-queue": "shovel", "dest-protocol": "amqp091", "dest-uri": "amqp://teamB:teamB@rabbitmq2:5672/vhost", "dest-exchange": "rabbitmq1.shovel"}" in vhost "vhost" ...
 
 ### backup_instance.sh and import_definitions.sh
 To keep the changes to the single instances, it's simple to export the current definitions.  
@@ -125,13 +83,11 @@ This definitions can be adjusted in JSON format and imported again.
 
     $ ./scripts/backup_instance.sh
     Exported definitions for localhost to "./export/rabbitmq1.json"  
-    Exported definitions for localhost to "./export/rabbitmq2.json"  
-    Exported definitions for localhost to "./export/rabbitmq3.json"  
+    ...
 
     $ ./scripts/import_definitions.sh
     Uploaded definitions from "localhost" to ./export/rabbitmq1.json. The import process may take some time. Consult server logs to track progress.  
-    Uploaded definitions from "localhost" to ./export/rabbitmq2.json. The import process may take some time. Consult server logs to track progress.  
-    Uploaded definitions from "localhost" to ./export/rabbitmq3.json. The import process may take some time. Consult server logs to track progress.  
+    ...
 
 ### setup_cluster.sh 
 Let `rabbitmq2` and `rabbitmq3` join `rabbitmq1` as cluster.  
@@ -147,18 +103,6 @@ When Shovel or Federation is used before the cluster will not work like expected
     Starting node rabbit@rabbitmq3 ...
     completed with 9 plugins.
 
-### setup_user.sh
-Add user and set permissions.  
-
-    $ ./scripts/setup_user.sh
-    Adding user "consumer" ...
-    Adding user "publisher" ...
-    Setting permissions for user "consumer" in vhost "vhost" ...
-    Setting permissions for user "publisher" in vhost "vhost" ...
-
-The user and password are the same!  
-Permissions are set for separating read and write access.  
-
 ### setup_retry_dlx_topology.sh
 Add exchanges, queues and bindings to create a DLX retry topology.  
 When a message gets rejected and a dead letter exchange is defined for the queue the message is forwarded to the defined exchange.  
@@ -170,20 +114,6 @@ For this retry topology we need two additional exchanges and a queue to let the 
 TTL is a constant delay for all messages to retry and RabbitMQ counts each time a message is dead-lettered and set it as count field on the `x-death` header.  
 
     $ ./scripts/setup_retry_dlx_topology.sh
-    exchange declared
-    exchange declared
-    exchange declared
-    queue declared
-    queue declared
-    binding declared
-    binding declared
-    binding declared
-    binding declared
-    binding declared
-    binding declared
-    binding declared
-    Setting policy "ha-events" for pattern ".\.events" to "{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.events"}" with priority "2" for vhost "vhost" ...
-    Setting policy "ha-retry-events" for pattern "dead-events" to "{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.retry"}" with priority "2" for vhost "vhost" ...
 
 ![Reject DLX Retry](./retry-dlx.png?raw=true "Reject DLX Retry")
 
@@ -191,14 +121,26 @@ TTL is a constant delay for all messages to retry and RabbitMQ counts each time 
 Set policies for exchanges and queues.  
 
     $ ./scripts/setup_policies.sh
-    Setting policy "ha-events" for pattern ".\.events" to "{"ha-mode":"all", "ha-sync-mode":"automatic", "dead-letter-exchange":"dlx.events"}" with priority "2" for vhost "vhost" ...
-    Setting policy "ha-lazy" for pattern "^(?!amq\.).+" to "{"queue-mode":"lazy", "ha-mode":"all", "ha-sync-mode":"automatic"}" with priority "1" for vhost "vhost" ...
 
 ### publish_message.sh
 Publish a message.
 
     $ ./scripts/publish_message.sh
     {"routed":true}
+
+## Terraform/Terragrunt
+
+Plan, apply and destroy the Terraform scripts to the specific instance.  
+
+    $ terragrunt plan --terragrunt-working-dir ./var/terraform/rabbitmq1
+
+    $ terragrunt apply --terragrunt-working-dir ./var/terraform/rabbitmq1 -auto-approve
+    $ terragrunt apply --terragrunt-working-dir ./var/terraform/rabbitmq2 -auto-approve
+    $ terragrunt apply --terragrunt-working-dir ./var/terraform/rabbitmq3 -auto-approve
+
+    $ terragrunt destroy --terragrunt-working-dir ./var/terraform/rabbitmq1 -auto-approve
+
+Every instance get the same setup the differences are defined in the specific `terragrunt.hcl` files or additional Terraform scripts.
 
 ## rabbitmq-perf-test
 
