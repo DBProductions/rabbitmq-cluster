@@ -34,7 +34,12 @@ Enabled plugins:
  - rabbitmq_prometheus  
  - rabbitmq_stream  
 
-The management UIs can be found under `http://localhost:15672`, `http://localhost:15673` and `http://localhost:15674`.  
+The management UIs can be found under:
+- `http://localhost:15672`
+- `http://localhost:15673`
+- `http://localhost:15674`  
+
+## Monitoring
 Prometheus is available under `http://localhost:9090/` and Grafana serves here `http://localhost:3000/`.  
 For Grafana the `admin` password is simple `password`. Some community built dashboards are included.  
 
@@ -115,18 +120,14 @@ TTL is a constant delay for all messages to retry and RabbitMQ counts each time 
 
     $ ./scripts/setup_retry_dlx_topology.sh
 
-![Reject DLX Retry](./retry-dlx.png?raw=true "Reject DLX Retry")
-
-### setup_policies.sh
-Set policies for exchanges and queues.  
-
-    $ ./scripts/setup_policies.sh
-
-### publish_message.sh
-Publish a message.
-
-    $ ./scripts/publish_message.sh
-    {"routed":true}
+```mermaid
+  flowchart LR;
+      events-->|user.create.account\nuser.update.account\nuser.delete.account| api.events;
+      api.events-->|dead-letter-exchange| dlx.events;
+      dlx.events-->|*.*.*| dead-events
+      dead-events-->|dead-letter-exchange, ttl| dlx.retry;
+      dlx.retry-->|user.create.account\nuser.update.account\nuser.delete.account| api.events;
+```
 
 ## Terraform/Terragrunt
 
@@ -141,6 +142,13 @@ Plan, apply and destroy the Terraform scripts to the specific instance.
     $ terragrunt destroy --terragrunt-working-dir ./var/terraform/rabbitmq1 -auto-approve
 
 Every instance get the same setup the differences are defined in the specific `terragrunt.hcl` files or additional Terraform scripts.
+
+```mermaid
+  flowchart LR;
+      events-->|#| all-events;
+      events-->|system.*.*| system-events;
+      events-->|*.update.*| update-events;
+```
 
 ## rabbitmq-perf-test
 
