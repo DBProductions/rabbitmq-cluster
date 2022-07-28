@@ -1,9 +1,12 @@
 #
 # Exchange federation (rabbitmq2 --> rabbitmq1)
+# rabbitmq1: downStreamExchange -- # --> downStreamQueue
+# rabbitmq1: rabbbitmq2 as upstream for rabbitmq1
+# rabbbitmq2: downStreamExchange
 #
 
 resource "rabbitmq_exchange" "downstream_exchange" {
-  name  = "downStreamRabbitMq2"
+  name  = "downStreamExchange"
   vhost = rabbitmq_vhost.rmqvhost.name
 
   settings {
@@ -13,7 +16,7 @@ resource "rabbitmq_exchange" "downstream_exchange" {
 }
 
 resource "rabbitmq_queue" "downstream_queue" {
-  name  = "downStreamRabbitMq2Queue"
+  name  = "downStreamQueue"
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {

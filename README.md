@@ -122,11 +122,11 @@ TTL is a constant delay for all messages to retry and RabbitMQ counts each time 
 
 ```mermaid
   flowchart LR;
-      events-->|user.create.account\nuser.update.account\nuser.delete.account| api.events;
-      api.events-->|dead-letter-exchange| dlx.events;
-      dlx.events-->|*.*.*| dead-events
-      dead-events-->|dead-letter-exchange, ttl| dlx.retry;
-      dlx.retry-->|user.create.account\nuser.update.account\nuser.delete.account| api.events;
+      A{events} --> |user.create.account\nuser.update.account\nuser.delete.account| B(api.events);
+      B --> |dead-letter-exchange| C{dlx.events};
+      C --> |*.*.*| D(dead.events)
+      D --> |dead-letter-exchange, ttl| E{dlx.retry};
+      E --> |user.create.account\nuser.update.account\nuser.delete.account| B;
 ```
 
 ## Terraform/Terragrunt
@@ -144,11 +144,13 @@ Plan, apply and destroy the Terraform scripts to the specific instance.
 Every instance get the same setup the differences are defined in the specific `terragrunt.hcl` files or additional Terraform scripts.
 
 ```mermaid
-  flowchart LR;
-      events-->|#| all-events;
-      events-->|system.*.*| system-events;
-      events-->|*.update.*| update-events;
+  flowchart LR
+    A{events} -->|#| B(all-events)
+    A --> |system.*.*| C(system-events)
+    A -->|*.update.*| D(update-events)
 ```
+
+The instance `rabbitmq1` have some additional Terrafrom scripts included to create topologies.
 
 ## rabbitmq-perf-test
 

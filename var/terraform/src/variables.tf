@@ -22,6 +22,14 @@ variable "team_password" {
   default = "team"
 }
 
+variable "msg-ttl-arguments" {
+  default = <<EOF
+{
+  "x-message-ttl": 5000
+}
+EOF
+}
+
 variable "stream-arguments" {
   default = <<EOF
 {
