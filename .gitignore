@@ -3,3 +3,4 @@
 .terragrunt-cache/
 var/data/**
 rabbitmq-perf-test-*/
+stream-perf-test-latest.jar

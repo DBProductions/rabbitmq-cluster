@@ -9,6 +9,7 @@ resource "rabbitmq_vhost" "rmqvhost" {
 # topic exchange to receive all events
 # stream for all events bind with `#`
 # queue for system events bind with `system.*.*`
+# queue for create events bind with `*.create.*`
 # queue for update events bind with `*.update.*`
 #
 
@@ -39,7 +40,23 @@ resource "rabbitmq_queue" "system_events" {
 
   settings {
     durable     = true
-    auto_delete = true
+    auto_delete = false
+    arguments = {
+      "x-queue-type" : "quorum",
+    }
+  }
+}
+
+resource "rabbitmq_queue" "create_events" {
+  name  = "create-events"
+  vhost = "${rabbitmq_vhost.rmqvhost.name}"
+
+  settings {
+    durable     = true
+    auto_delete = false
+    arguments = {
+      "x-queue-type" : "quorum",
+    }
   }
 }
 
@@ -49,7 +66,10 @@ resource "rabbitmq_queue" "update_events" {
 
   settings {
     durable     = true
-    auto_delete = true
+    auto_delete = false
+    arguments = {
+      "x-queue-type" : "quorum",
+    }
   }
 }
 
@@ -67,6 +87,14 @@ resource "rabbitmq_binding" "system_events_binding" {
   destination      = "${rabbitmq_queue.system_events.name}"
   destination_type = "queue"
   routing_key      = "system.*.*" 
+}
+
+resource "rabbitmq_binding" "create_events_binding" {
+  source           = "${rabbitmq_exchange.events.name}"
+  vhost            = "${rabbitmq_vhost.rmqvhost.name}"
+  destination      = "${rabbitmq_queue.create_events.name}"
+  destination_type = "queue"
+  routing_key      = "*.create.*" 
 }
 
 resource "rabbitmq_binding" "update_events_binding" {

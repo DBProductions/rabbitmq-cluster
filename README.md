@@ -1,13 +1,13 @@
 # RabbitMQ
 
-This repository gives the possibility to play around with RabbitMQ 3.9.20.  
-Should help to understand how Clustering, Federation- and Shovel-Plugin are working.  
+This repository gives you the possibility to play around with RabbitMQ 3.11.5.  
+To understand how Clustering, Federation- and Shovel-Plugin work.  
 
 # Docker
 
 The `docker-compose` file contains three RabbitMQ services `rabbitmq1`, `rabbitmq2` and `rabbitmq3`.  
 Additional Prometheus is defined to monitor the RabbitMQ instances and Grafana to display the stats.  
-The used vhost is simple named `vhost`, the admin user (`rabbit`) and password (`rabbit`) are on all nodes the same.  
+The used virtual host is simple named `vhost`, the admin user (`rabbit`) and password (`rabbit`) are on all nodes the same.  
 
     $ docker-compose up --build
 
@@ -147,16 +147,26 @@ Every instance get the same setup the differences are defined in the specific `t
   flowchart LR
     A{events} -->|#| B(all-events)
     A --> |system.*.*| C(system-events)
-    A -->|*.update.*| D(update-events)
+    A -->|*.create.*| D(create-events)
+    A -->|*.update.*| E(update-events)
 ```
 
 The instance `rabbitmq1` have some additional Terrafrom scripts included to create topologies.
 
+Filtering with two exchanges, a `topic` exchange in front of an `header` exchange.
+```mermaid
+  flowchart LR
+    A{unfiltered} --> |#| B{eventrouter}
+    A --> |#| C(unfiltered-log)
+    B --> |x-match=any\ncountry=1\nrid=1| D(filtered-1)
+    B --> |x-match=any\ncountry=2\nrid=2| E(filtered-2)
+```
+
 ## rabbitmq-perf-test
 
-    wget https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.15.0/rabbitmq-perf-test-2.15.0-bin.zip
-    unzip rabbitmq-perf-test-2.15.0-bin.zip
-    cd rabbitmq-perf-test-2.15.0/
+    wget https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.18.0/rabbitmq-perf-test-2.18.0-bin.zip
+    unzip rabbitmq-perf-test-2.18.0-bin.zip
+    cd rabbitmq-perf-test-2.18.0/
 
 Runs it against the cluster.
 
@@ -175,6 +185,11 @@ To see the result, change to the results directory and start a web server.
 
     cd ../var/rabbitmq/results/
     python3 -m http.server 8888
+
+## stream-perf-test
+
+    wget https://github.com/rabbitmq/rabbitmq-java-tools-binaries-dev/releases/download/v-stream-perf-test-latest/stream-perf-test-latest.jar
+    java -jar stream-perf-test-latest.jar --delete-streams --uris rabbitmq-stream://rabbit:rabbit@localhost:5552/vhost
 
 ## Feedback
 Star this repo if you found it useful. Use the github issue tracker to give feedback on this repo.

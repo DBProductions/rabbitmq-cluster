@@ -25,6 +25,7 @@ variable "team_password" {
 variable "msg-ttl-arguments" {
   default = <<EOF
 {
+  "x-queue-type": "quorum",
   "x-message-ttl": 5000
 }
 EOF
@@ -33,7 +34,9 @@ EOF
 variable "stream-arguments" {
   default = <<EOF
 {
-  "x-queue-type": "stream"
+  "x-queue-type": "stream",
+  "x-stream-max-segment-size-bytes": 250,
+  "x-max-age": "5m"
 }
 EOF
 }

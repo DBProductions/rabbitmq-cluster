@@ -40,6 +40,9 @@ resource "rabbitmq_queue" "apievents_queue" {
   settings {
     durable     = true
     auto_delete = false
+    arguments = {
+      "x-queue-type" : "quorum",
+    }
   }
 }
 

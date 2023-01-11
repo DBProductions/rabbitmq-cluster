@@ -1,3 +1,3 @@
-FROM rabbitmq:3.9.20-management
+FROM rabbitmq:3.11.5-management
 RUN rabbitmq-plugins enable --offline rabbitmq_mqtt rabbitmq_federation rabbitmq_federation_management rabbitmq_stomp rabbitmq_shovel rabbitmq_shovel_management rabbitmq_prometheus rabbitmq_stream
 #RUN rabbitmq-plugins list

@@ -2,7 +2,7 @@
 # Filter topology based on two exchanges.
 # unfiltered as topic exchange takes all messages and send them the unfiltered-log queue
 # eventrouter as exchange is bind to the unfiltered exchange
-# now we can add queues and bindings to the eventrouter to filter bbased on headers
+# now we can add queues and bindings to the eventrouter to filter based on headers
 #
 
 resource "rabbitmq_exchange" "unfiltered" {
@@ -32,7 +32,7 @@ resource "rabbitmq_queue" "unfiltered_log" {
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {
-    durable     = true
+    durable     = false
     auto_delete = true
   }
 }
@@ -42,7 +42,7 @@ resource "rabbitmq_queue" "filtered_1" {
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {
-    durable     = true
+    durable     = false
     auto_delete = true
   }
 }
@@ -52,7 +52,7 @@ resource "rabbitmq_queue" "filtered_2" {
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {
-    durable     = true
+    durable     = false
     auto_delete = true
   }
 }
@@ -62,7 +62,7 @@ resource "rabbitmq_queue" "filtered_all" {
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {
-    durable     = true
+    durable     = false
     auto_delete = true
   }
 }
