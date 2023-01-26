@@ -141,7 +141,7 @@ Plan, apply and destroy the Terraform scripts to the specific instance.
 
     $ terragrunt destroy --terragrunt-working-dir ./var/terraform/rabbitmq1 -auto-approve
 
-Every instance get the same setup the differences are defined in the specific `terragrunt.hcl` files or additional Terraform scripts.
+Every instance get the same setup, differences are defined in the specific `terragrunt.hcl` file or additional Terraform scripts.
 
 ```mermaid
   flowchart LR
@@ -161,6 +161,9 @@ Filtering with two exchanges, a `topic` exchange in front of an `header` exchang
     B --> |x-match=any\ncountry=1\nrid=1| D(filtered-1)
     B --> |x-match=any\ncountry=2\nrid=2| E(filtered-2)
 ```
+
+The instance `rabbbitmq2` have no additional Terraform scripts but `rabbitmq3` try to federate all exchanges and queues with `rabbitmq1`.  
+This means every exchanges and queue created on instance `rabbitmq3` will create a connection and topology on `rabbitmq1`.
 
 ## rabbitmq-perf-test
 
