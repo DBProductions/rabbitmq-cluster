@@ -1,12 +1,12 @@
 #
 # Filter topology based on two exchanges.
-# unfiltered as topic exchange takes all messages and send them the unfiltered-log queue
-# eventrouter as exchange is bind to the unfiltered exchange
-# now we can add queues and bindings to the eventrouter to filter based on headers
+# Unfiltered as topic exchange takes all messages and send them the unfiltered-log queue
+# Eventrouter as exchange is bind to the unfiltered exchange
+# now we can add queues and bindings to the Eventrouter to filter based on headers
 #
 
 resource "rabbitmq_exchange" "unfiltered" {
-  name  = "unfiltered"
+  name  = "Unfiltered"
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {
@@ -17,7 +17,7 @@ resource "rabbitmq_exchange" "unfiltered" {
 }
 
 resource "rabbitmq_exchange" "eventrouter" {
-  name  = "eventrouter"
+  name  = "Eventrouter"
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
 
   settings {
@@ -73,6 +73,10 @@ resource "rabbitmq_binding" "unfiltered_filter_binding" {
   destination      = "${rabbitmq_exchange.eventrouter.name}"
   destination_type = "exchange"
   routing_key      = "#"
+  depends_on = [
+    rabbitmq_exchange.unfiltered,
+    rabbitmq_exchange.eventrouter
+  ]
 }
 
 resource "rabbitmq_binding" "unfiltered_log_binding" {
@@ -81,6 +85,10 @@ resource "rabbitmq_binding" "unfiltered_log_binding" {
   destination      = "${rabbitmq_queue.unfiltered_log.name}"
   destination_type = "queue"
   routing_key      = "#"
+  depends_on = [
+    rabbitmq_exchange.unfiltered,
+    rabbitmq_queue.unfiltered_log
+  ]
 }
 
 resource "rabbitmq_binding" "filtered_1_binding" {
@@ -89,6 +97,10 @@ resource "rabbitmq_binding" "filtered_1_binding" {
   destination      = "${rabbitmq_queue.filtered_1.name}"
   destination_type = "queue"
   arguments = "${var.binding-arguments-1}"
+  depends_on = [
+    rabbitmq_exchange.eventrouter,
+    rabbitmq_queue.filtered_1
+  ]
 }
 
 resource "rabbitmq_binding" "filtered_2_binding" {
@@ -97,6 +109,10 @@ resource "rabbitmq_binding" "filtered_2_binding" {
   destination      = "${rabbitmq_queue.filtered_2.name}"
   destination_type = "queue"
   arguments = "${var.binding-arguments-2}"
+  depends_on = [
+    rabbitmq_exchange.eventrouter,
+    rabbitmq_queue.filtered_2
+  ]
 }
 
 resource "rabbitmq_binding" "filtered_all_binding" {
@@ -105,4 +121,8 @@ resource "rabbitmq_binding" "filtered_all_binding" {
   destination      = "${rabbitmq_queue.filtered_all.name}"
   destination_type = "queue"
   arguments = "${var.binding-arguments-all}"
+  depends_on = [
+    rabbitmq_exchange.eventrouter,
+    rabbitmq_queue.filtered_all
+  ]
 }

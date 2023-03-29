@@ -64,6 +64,10 @@ resource "rabbitmq_binding" "create_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.apievents_queue.name}"
   destination_type = "queue"
   routing_key      = "user.create.account"
+  depends_on = [
+    rabbitmq_exchange.system_exchange,
+    rabbitmq_queue.apievents_queue
+  ]
 }
 
 resource "rabbitmq_binding" "update_exchange_queue_binding" {
@@ -72,6 +76,10 @@ resource "rabbitmq_binding" "update_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.apievents_queue.name}"
   destination_type = "queue"
   routing_key      = "user.update.account"
+  depends_on = [
+    rabbitmq_exchange.system_exchange,
+    rabbitmq_queue.apievents_queue
+  ]
 }
 
 resource "rabbitmq_binding" "delete_exchange_queue_binding" {
@@ -80,6 +88,10 @@ resource "rabbitmq_binding" "delete_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.apievents_queue.name}"
   destination_type = "queue"
   routing_key      = "user.delete.account"
+  depends_on = [
+    rabbitmq_exchange.system_exchange,
+    rabbitmq_queue.apievents_queue
+  ]
 }
 
 resource "rabbitmq_binding" "dead_exchange_queue_binding" {
@@ -88,6 +100,10 @@ resource "rabbitmq_binding" "dead_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.deadevents_queue.name}"
   destination_type = "queue"
   routing_key      = "*.*.*"
+  depends_on = [
+    rabbitmq_exchange.deadletter_exchange,
+    rabbitmq_queue.deadevents_queue
+  ]
 }
 
 resource "rabbitmq_binding" "retry_create_exchange_queue_binding" {
@@ -96,6 +112,10 @@ resource "rabbitmq_binding" "retry_create_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.apievents_queue.name}"
   destination_type = "queue"
   routing_key      = "user.create.account"
+  depends_on = [
+    rabbitmq_exchange.retry_exchange,
+    rabbitmq_queue.apievents_queue
+  ]
 }
 
 resource "rabbitmq_binding" "retry_update_exchange_queue_binding" {
@@ -104,6 +124,10 @@ resource "rabbitmq_binding" "retry_update_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.apievents_queue.name}"
   destination_type = "queue"
   routing_key      = "user.update.account"
+  depends_on = [
+    rabbitmq_exchange.retry_exchange,
+    rabbitmq_queue.apievents_queue
+  ]
 }
 
 resource "rabbitmq_binding" "retry_delete_exchange_queue_binding" {
@@ -112,6 +136,10 @@ resource "rabbitmq_binding" "retry_delete_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.apievents_queue.name}"
   destination_type = "queue"
   routing_key      = "user.delete.account"
+  depends_on = [
+    rabbitmq_exchange.retry_exchange,
+    rabbitmq_queue.apievents_queue
+  ]
 }
 
 # policies

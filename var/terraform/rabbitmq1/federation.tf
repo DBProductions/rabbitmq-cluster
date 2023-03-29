@@ -1,12 +1,12 @@
 #
 # Exchange federation (rabbitmq2 --> rabbitmq1)
-# rabbitmq1: downStreamExchange -- # --> downStreamQueue
+# rabbitmq1: ExchangeFederated -- # --> downStreamQueue
 # rabbitmq1: rabbbitmq2 as upstream for rabbitmq1
-# rabbbitmq2: downStreamExchange
+# rabbbitmq2: ExchangeFederated
 #
 
 resource "rabbitmq_exchange" "downstream_exchange" {
-  name  = "downStreamExchange"
+  name  = "ExchangeFederated"
   vhost = rabbitmq_vhost.rmqvhost.name
 
   settings {
@@ -31,10 +31,14 @@ resource "rabbitmq_binding" "downstream_exchange_queue_binding" {
   destination      = "${rabbitmq_queue.downstream_queue.name}"
   destination_type = "queue"
   routing_key      = "#"
+  depends_on = [
+    rabbitmq_exchange.downstream_exchange,
+    rabbitmq_queue.downstream_queue
+  ]
 }
 
 // upstream broker
-resource "rabbitmq_federation_upstream" "rabbitmq2" {
+resource "rabbitmq_federation_upstream" "rabbitmq2_upstream" {
   name = "rabbitmq2"
   vhost = rabbitmq_vhost.rmqvhost.name
 
@@ -49,7 +53,7 @@ resource "rabbitmq_federation_upstream" "rabbitmq2" {
 }
 
 resource "rabbitmq_policy" "exchange_policy" {
-  name  = "rabbitmq2Exchange"
+  name  = "RabbitMQ2"
   vhost = rabbitmq_vhost.rmqvhost.name
 
   policy {
@@ -58,7 +62,11 @@ resource "rabbitmq_policy" "exchange_policy" {
     apply_to = "exchanges"
 
     definition = {
-      federation-upstream = rabbitmq_federation_upstream.rabbitmq2.name
+      federation-upstream = rabbitmq_federation_upstream.rabbitmq2_upstream.name
     }
   }
+
+  depends_on = [
+    rabbitmq_federation_upstream.rabbitmq2_upstream
+  ]
 }
