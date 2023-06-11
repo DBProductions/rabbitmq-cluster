@@ -1,4 +1,7 @@
-// upstream broker
+#
+# Federate all exchanges and queues.
+#
+
 resource "rabbitmq_federation_upstream" "rabbitmq1" {
   name = "rabbitmq1"
   vhost = rabbitmq_vhost.rmqvhost.name

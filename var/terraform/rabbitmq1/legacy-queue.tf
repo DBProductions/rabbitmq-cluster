@@ -1,6 +1,7 @@
 #
-# Legacy queue shovels messages from one queue to another on the same broker.
+# Legacy queue shovels messages to another new queue on the same broker.
 # Change consumer to the new queue and publisher afterwards to prevent losing messages.
+# Afterwards the legacy queue can be safely removed.
 #
 
 resource "rabbitmq_queue" "legacy" {
