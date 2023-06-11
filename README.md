@@ -1,6 +1,6 @@
 # RabbitMQ
 
-This repository gives you the possibility to play around with RabbitMQ 3.11.5.  
+This repository gives you the possibility to play around with RabbitMQ 3.12.0.  
 To understand how Clustering, Federation- and Shovel-Plugin work.  
 
 # Docker
