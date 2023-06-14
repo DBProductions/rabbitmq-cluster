@@ -10,5 +10,5 @@ inputs = {
 }
 
 terraform {
-    source = "../src"
+    source = "${find_in_parent_folders("src")}///"
 }

@@ -51,40 +51,9 @@ When you face problems with the Grafana login you can set a password like this.
 
 A collection of scripts using `rabbitmqadmin`, `rabbitmqctl` and `curl` to create Cluster, Upstreams, Exchanges, Queues, Bindings, Policies, User and publish messages.
 
-### setup_federation.sh
-Instead of joining a cluster, we have three broker and want to connect them.  
-On `rabbitmq1` we create a exchange, two queues, a binding and add two upstreams.  
-`rabbitmq2` and `rabbitmq3` we create a user used to connect with the upstreams.  
-This upstreams are connecting to `rabbitmq2` and `rabbitmq3` after the policies are applied on `rabbitmq1`.  
-
-The federated exchange links to the upstream exchange, published messages to `rabbitmq2` will be copied to `rabbitmq1`.  
-The federated queue links to the upstream queue and will retrieve messages from `rabbitmq3` when a consumer is connected on `rabbitmq1`.  
-The running federation links can called over the API: `http://localhost:15672/api/federation-links`
-
-    $ ./scripts/setup_federation.sh
-
-### setup_shovel.sh
-Instead of joining a cluster, we have three broker and want to connect them.  
-On all three broker we create a queue named `shovel`, on `rabbitmq1` and `rabbitmq2` we create a dynamic shovel.  
-`rabbitmq2` have an additional exchange named `rabbitmq1.shovel` bind to the `shovel` queue on `rabbitmq2`.  
-
-The queue on `rabbitmq1` is the source for the exchange on `rabbitmq2` and the queue on `rabbitmq2` is then the source for the queue on `rabbitmq3`.  
-Every message published to `shovel` on `rabbitmq1` is shovelled to the exchange `rabbitmq1.shovel` on `rabbitmq2` then finally shovelled from the `shovel` queue on `rabbitmq2` to the `shovel` queue on `rabbitmq3`.
-
-    $ ./scripts/setup_shovel.sh
-
-### setup_team.sh
-Add to `rabbitmq1` and `rabbitmq2` user and permissions for two teams.  
-The idea is to have on every machine a administrator (teamA, teamB) and monitoring user (monitor).  
-In addition to this every instance have a user for every service (serviceA, serviceB).  
-The two instances are connected with a federation upstream where `rabbitmq1` receives copies from `rabbitmq2`.  
-The `shovel` queue on `rabbitmq1` shovels messages to the exchange `rabbitmq1.shovel` on `rabbitmq2`.  
-
-    $ ./scripts/setup_team.sh
-
-### backup_instance.sh and import_definitions.sh
-To keep the changes to the single instances, it's simple to export the current definitions.  
-This definitions can be adjusted in JSON format and imported again.
+<details>
+  <summary> backup_instance.sh and import_definitions.sh</summary>
+  To keep the changes to the single instances, it's simple to export the current definitions. This definitions can be adjusted in JSON format and imported again.
 
     $ ./scripts/backup_instance.sh
     Exported definitions for localhost to "./export/rabbitmq1.json"  
@@ -93,10 +62,49 @@ This definitions can be adjusted in JSON format and imported again.
     $ ./scripts/import_definitions.sh
     Uploaded definitions from "localhost" to ./export/rabbitmq1.json. The import process may take some time. Consult server logs to track progress.  
     ...
+</details>
 
-### setup_cluster.sh 
-Let `rabbitmq2` and `rabbitmq3` join `rabbitmq1` as cluster.  
-When Shovel or Federation is used before the cluster will not work like expected!  
+<details>
+  <summary> setup_federation.sh</summary>
+  Instead of joining a cluster, we have three broker and want to connect them.  
+  On `rabbitmq1` we create an exchange, two queues, a binding and add two upstreams.  
+  Creates a user on `rabbitmq2` and `rabbitmq3` to connect with the upstreams.  
+  This upstreams are connecting to `rabbitmq2` and `rabbitmq3` after the policies are applied on `rabbitmq1`.  
+
+  The federated exchange links to the upstream exchange, published messages to `rabbitmq2` will be copied to `rabbitmq1`.  
+  The federated queue links to the upstream queue and will retrieve messages from `rabbitmq3` when a consumer is connected on `rabbitmq1`.  
+  The running federation links can called over the API: `http://localhost:15672/api/federation-links`
+
+    $ ./scripts/setup_federation.sh
+</details>
+
+<details>
+  <summary> setup_shovel.sh</summary>
+  Instead of joining a cluster, we have three broker and want to connect them.  
+  On all three broker we create a queue named `shovel`, on `rabbitmq1` and `rabbitmq2` we create a dynamic shovel.  
+  `rabbitmq2` have an additional exchange named `rabbitmq1.shovel` bind to the `shovel` queue on `rabbitmq2`.  
+
+  The queue on `rabbitmq1` is the source for the exchange on `rabbitmq2` and the queue on `rabbitmq2` is then the source for the queue on `rabbitmq3`.  
+  Every message published to `shovel` on `rabbitmq1` is shovelled to the exchange `rabbitmq1.shovel` on `rabbitmq2` then finally shovelled from the `shovel` queue on `rabbitmq2` to the `shovel` queue on `rabbitmq3`.
+
+    $ ./scripts/setup_shovel.sh
+</details>
+
+<details>
+  <summary> setup_team.sh</summary>
+  Add to `rabbitmq1` and `rabbitmq2` user and permissions for two teams.  
+  The idea is to have on every machine a administrator (teamA, teamB) and monitoring user (monitor).  
+  In addition to this every instance have a user for every service (serviceA, serviceB).  
+  The two instances are connected with a federation upstream where `rabbitmq1` receives copies from `rabbitmq2`.  
+  The `shovel` queue on `rabbitmq1` shovels messages to the exchange `rabbitmq1.shovel` on `rabbitmq2`.  
+
+    $ ./scripts/setup_team.sh
+</details>
+
+<details>
+  <summary> setup_cluster.sh</summary>
+  Let `rabbitmq2` and `rabbitmq3` join `rabbitmq1` as cluster.  
+  When Shovel or Federation is used before the cluster will not work like expected!  
 
     $ ./scripts/setup_cluster.sh
     Stopping rabbit application on node rabbit@rabbitmq2 ...
@@ -107,16 +115,18 @@ When Shovel or Federation is used before the cluster will not work like expected
     Clustering node rabbit@rabbitmq3 with rabbit@rabbitmq1
     Starting node rabbit@rabbitmq3 ...
     completed with 9 plugins.
+</details>
 
-### setup_retry_dlx_topology.sh
-Add exchanges, queues and bindings to create a DLX retry topology.  
-When a message gets rejected and a dead letter exchange is defined for the queue the message is forwarded to the defined exchange.  
-The dead letter exchange is bind to a queue where all rejected messages arrive, this queue have a `x-message-ttl` defined.  
-Additional to the TTL the queue have also a dead-letter-exchange defined, when the TTL is over the messages are forwarded to this exchange.  
-From the second exchange the messages are routed again to the queue where they have been rejected.  
+<details>
+  <summary> setup_retry_dlx_topology.sh</summary>
+  Add exchanges, queues and bindings to create a DLX retry topology.  
+  When a message gets rejected and a dead letter exchange is defined for the queue the message is forwarded to the defined exchange.  
+  The dead letter exchange is bind to a queue where all rejected messages arrive, this queue have a `x-message-ttl` defined.  
+  Additional to the TTL the queue have also a dead-letter-exchange defined, when the TTL is over the messages are forwarded to this exchange.  
+  From the second exchange the messages are routed again to the queue where they have been rejected.  
 
-For this retry topology we need two additional exchanges and a queue to let the messages wait before they get routed again.  
-TTL is a constant delay for all messages to retry and RabbitMQ counts each time a message is dead-lettered and set it as count field on the `x-death` header.  
+  For this retry topology we need two additional exchanges and a queue to let the messages wait before they get routed again.  
+  TTL is a constant delay for all messages to retry and RabbitMQ counts each time a message is dead-lettered and set it as count field on the `x-death` header.  
 
     $ ./scripts/setup_retry_dlx_topology.sh
 
@@ -128,8 +138,18 @@ TTL is a constant delay for all messages to retry and RabbitMQ counts each time 
       D --> |dead-letter-exchange, ttl| E{dlx.retry};
       E --> |user.create.account\nuser.update.account\nuser.delete.account| B;
 ```
+</details>
+  
+# Terraform/Terragrunt
 
-## Terraform/Terragrunt
+Directory structure organised for every instance to have an own folder with specific Terraform scripts. The scripts in `src` are executed on every instance like a common configuration.
+```
+- /var/terraform
+  - /rabbitmq1
+  - /rabbitmq2
+  - /rabbitmq3
+  - /src
+```
 
 Plan, apply and destroy the Terraform scripts to the specific instance.  
 
@@ -138,6 +158,8 @@ Plan, apply and destroy the Terraform scripts to the specific instance.
     $ terragrunt apply --terragrunt-working-dir ./var/terraform/rabbitmq1 -auto-approve
     $ terragrunt apply --terragrunt-working-dir ./var/terraform/rabbitmq2 -auto-approve
     $ terragrunt apply --terragrunt-working-dir ./var/terraform/rabbitmq3 -auto-approve
+
+    $ terragrunt run-all apply --terragrunt-working-dir ./var/terraform/ -auto-approve
 
     $ terragrunt destroy --terragrunt-working-dir ./var/terraform/rabbitmq1 -auto-approve
 
@@ -162,8 +184,7 @@ Filtering with two exchanges, a `topic` exchange in front of an `header` exchang
     B --> |x-match=any\ncountry=2\nrid=2| E(filtered-2)
 ```
 
-The instance `rabbbitmq2` have no additional Terraform scripts but `rabbitmq3` try to federate all exchanges and queues with `rabbitmq1`.  
-This means every exchanges and queue created on instance `rabbitmq3` will create a connection and topology on `rabbitmq1`.
+The instance `rabbbitmq2` have no additional Terraform scripts but `rabbitmq3` try to federate all exchanges and queues with `rabbitmq1`. Every exchanges and queue created on instance `rabbitmq3` will create a connection and topology on `rabbitmq1`.
 
 ## rabbitmq-perf-test
 
