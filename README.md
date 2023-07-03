@@ -165,12 +165,15 @@ Plan, apply and destroy the Terraform scripts to the specific instance.
 
 Every instance get the same setup, differences are defined in the specific `terragrunt.hcl` file or additional Terraform scripts.
 
+The setup contains an `events` topic exchange to route based on the routing key. The routing keys are following the `subject.verb.object` definition to be flexible for defining queues and bindings as needed. `all-events` and `last-events` are queues of type stream to keep the messages, `last-events` have a `x-max-age` defined for five minutes to keep it short, `all-events` keep all events.
+
 ```mermaid
   flowchart LR
     A{events} -->|#| B(all-events)
-    A --> |system.*.*| C(system-events)
-    A -->|*.create.*| D(create-events)
-    A -->|*.update.*| E(update-events)
+    A -->|#| C(last-events)
+    A --> |system.*.*| D(system-events)
+    A -->|*.create.*| E(create-events)
+    A -->|*.update.*| F(update-events)
 ```
 
 The instance `rabbitmq1` have some additional Terrafrom scripts included to create topologies.

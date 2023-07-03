@@ -34,6 +34,16 @@ resource "rabbitmq_queue" "all_events" {
   }
 }
 
+resource "rabbitmq_queue" "last_events" {
+  name  = "last-events"
+  vhost = "${rabbitmq_vhost.rmqvhost.name}"
+
+  settings {
+    durable        = true
+    arguments_json = "${var.stream-arguments-short}"
+  }
+}
+
 resource "rabbitmq_queue" "system_events" {
   name  = "system-events"
   vhost = "${rabbitmq_vhost.rmqvhost.name}"
@@ -77,6 +87,14 @@ resource "rabbitmq_binding" "all_events_binding" {
   source           = "${rabbitmq_exchange.events.name}"
   vhost            = "${rabbitmq_vhost.rmqvhost.name}"
   destination      = "${rabbitmq_queue.all_events.name}"
+  destination_type = "queue"
+  routing_key      = "#" 
+}
+
+resource "rabbitmq_binding" "last_events_binding" {
+  source           = "${rabbitmq_exchange.events.name}"
+  vhost            = "${rabbitmq_vhost.rmqvhost.name}"
+  destination      = "${rabbitmq_queue.last_events.name}"
   destination_type = "queue"
   routing_key      = "#" 
 }

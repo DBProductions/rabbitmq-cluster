@@ -34,6 +34,14 @@ EOF
 variable "stream-arguments" {
   default = <<EOF
 {
+  "x-queue-type": "stream"
+}
+EOF
+}
+
+variable "stream-arguments-short" {
+  default = <<EOF
+{
   "x-queue-type": "stream",
   "x-stream-max-segment-size-bytes": 250,
   "x-max-age": "5m"
