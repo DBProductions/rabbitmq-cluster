@@ -1,13 +1,10 @@
 # RabbitMQ
 
-This repository gives you the possibility to play around with RabbitMQ 3.12.0.  
-To understand how Clustering, Federation- and Shovel-Plugin work.  
+This repository provides you with the opportunity to experiment with RabbitMQ 3.12.0 and gain a better understanding of how Clustering, Federation, and Shovel plugins function.  
 
 # Docker
 
-The `docker-compose` file contains three RabbitMQ services `rabbitmq1`, `rabbitmq2` and `rabbitmq3`.  
-Additional Prometheus is defined to monitor the RabbitMQ instances and Grafana to display the stats.  
-The used virtual host is simple named `vhost`, the admin user (`rabbit`) and password (`rabbit`) are on all nodes the same.  
+The `docker-compose` file consists of three RabbitMQ services named `rabbitmq1`, `rabbitmq2`, and `rabbitmq3`. Additionally, Prometheus is configured to monitor the RabbitMQ instances, and Grafana is used to display the statistics. The virtual host used is simply named `vhost`, and the admin user (`rabbit`) and password (`rabbit`) are the same on all nodes.  
 
     $ docker-compose up --build
 
@@ -20,7 +17,7 @@ The following services are defined:
  - prometheus
  - grafana
 
-In case you only want to have two instance without monitoring it can be started like this.
+If you only want to have two instances without monitoring, you can start them using the provided configuration like this.
 
     $ docker-compose up rabbitmq1 rabbitmq2 --build
 
@@ -165,7 +162,8 @@ Plan, apply and destroy the Terraform scripts to the specific instance.
 
 Every instance get the same setup, differences are defined in the specific `terragrunt.hcl` file or additional Terraform scripts.
 
-The setup contains an `events` topic exchange to route based on the routing key. The routing keys are following the `subject.verb.object` definition to be flexible for defining queues and bindings as needed. `all-events` and `last-events` are queues of type stream to keep the messages, `last-events` have a `x-max-age` defined for five minutes to keep it short, `all-events` keep all events.
+The setup includes an `events` topic exchange for routing messages based on the routing key.  
+The routing keys follow the `subject.verb.object` definition, allowing flexibility in defining queues and bindings as required. There are two queues, `all-events` and `last-events`, both of which are of type `stream` to store the messages. The `last-events` queue has a defined `x-max-age` of five minutes to keep the messages short-lived, while the `all-events` queue stores all events.
 
 ```mermaid
   flowchart LR
