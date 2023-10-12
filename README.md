@@ -30,7 +30,6 @@ Enabled plugins:
  - rabbitmq_shovel_management  
  - rabbitmq_prometheus  
  - rabbitmq_stream  
- - rabbitmq_delayed_message_exchange  
 
 The management UIs can be found under:
 - `http://localhost:15672`
