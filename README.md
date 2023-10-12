@@ -30,6 +30,7 @@ Enabled plugins:
  - rabbitmq_shovel_management  
  - rabbitmq_prometheus  
  - rabbitmq_stream  
+ - rabbitmq_delayed_message_exchange  
 
 The management UIs can be found under:
 - `http://localhost:15672`
@@ -184,6 +185,19 @@ Filtering with two exchanges, a `topic` exchange in front of an `header` exchang
     B --> |x-match=any\ncountry=1\nrid=1| D(filtered-1)
     B --> |x-match=any\ncountry=2\nrid=2| E(filtered-2)
 ```
+
+When calling external APIs some requests can fail and be successful after a second try or result in an error.  
+The policy `delivery-limit` defines a limit of 3 for the `requests.delayed` queue.  
+```mermaid
+  flowchart LR
+    A{requests} --> |#| B(requests.current)
+    B --> |dead-letter-exchange| C{retry.requests}
+    C --> | x-match=any-with-x\nx-first-death-reason=rejected | D(requests.delayed)
+    D --> | dead-letter-exchange | E
+    C --> |alternate-exchange| E{error.requests}
+    E --> F(requests.error)
+```
+
 
 The instance `rabbbitmq2` have no additional Terraform scripts but `rabbitmq3` try to federate all exchanges and queues with `rabbitmq1`. Every exchanges and queue created on instance `rabbitmq3` will create a connection and topology on `rabbitmq1`.
 

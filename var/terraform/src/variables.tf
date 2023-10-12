@@ -49,6 +49,24 @@ variable "stream-arguments-short" {
 EOF
 }
 
+variable "x-death-arguments" {
+  default = <<EOF
+{
+  "x-match": "any-with-x",
+  "x-first-death-reason": "rejected"  
+}
+EOF
+}
+
+variable "x-death-limit-arguments" {
+  default = <<EOF
+{
+  "x-match": "any-with-x",
+  "x-delivery-count": 2
+}
+EOF
+}
+
 variable "binding-arguments" {
   type = map
 
