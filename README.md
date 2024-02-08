@@ -197,8 +197,10 @@ The policy `delivery-limit` defines a limit of 3 for the `requests.delayed` queu
     E --> F(requests.error)
 ```
 
-
 The instance `rabbbitmq2` have no additional Terraform scripts but `rabbitmq3` try to federate all exchanges and queues with `rabbitmq1`. Every exchanges and queue created on instance `rabbitmq3` will create a connection and topology on `rabbitmq1`.
+
+## Clients
+Under `/clients` are some simple clients in Python and Go to play around with the running `rabbitmq1` broker.
 
 ## rabbitmq-perf-test
 

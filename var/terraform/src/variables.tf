@@ -22,6 +22,16 @@ variable "team_password" {
   default = "team"
 }
 
+variable "federation_username" {
+  type    = string
+  default = "federation"
+}
+
+variable "federation_password" {
+  type    = string
+  default = "federation"
+}
+
 variable "msg-ttl-arguments" {
   default = <<EOF
 {

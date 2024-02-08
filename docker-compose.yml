@@ -1,13 +1,15 @@
-version: '3.8'
+version: '3.9'
 services:
   rabbitmq1:
     build: ./var/rabbitmq
     hostname: rabbitmq1
     ports:  
+    - "1883:1883"
     - "5672:5672"
     - "5552:5552"
     - "15672:15672"
     - "15692:15692"
+    - "61613:61613"
     volumes:
       - ./var/rabbitmq:/export
       - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
@@ -16,10 +18,12 @@ services:
     build: ./var/rabbitmq
     hostname: rabbitmq2
     ports:
+    - "1884:1883"
     - "5673:5672"
     - "5553:5552"
     - "15673:15672"
     - "15693:15692"
+    - "61614:61613"
     volumes:
       - ./var/rabbitmq:/export
       - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
@@ -28,10 +32,12 @@ services:
     build: ./var/rabbitmq
     hostname: rabbitmq3
     ports:
+    - "1885:1883"
     - "5674:5672"
     - "5554:5552"
     - "15674:15672"
     - "15694:15692"
+    - "61615:61613"
     volumes:
       - ./var/rabbitmq:/export
       - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie

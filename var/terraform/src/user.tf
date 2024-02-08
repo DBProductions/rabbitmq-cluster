@@ -4,6 +4,12 @@ resource "rabbitmq_user" "team" {
   tags     = ["administrator", "management"]
 }
 
+resource "rabbitmq_user" "federation" {
+  name     = var.federation_username
+  password = var.federation_password
+  tags     = ["federation"]
+}
+
 resource "rabbitmq_user" "publisher" {
   name     = "publisher"
   password = "publisher"

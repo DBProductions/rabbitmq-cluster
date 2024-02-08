@@ -41,15 +41,17 @@ resource "rabbitmq_binding" "downstream_exchange_queue_binding" {
 resource "rabbitmq_federation_upstream" "rabbitmq2_upstream" {
   name = "rabbitmq2"
   vhost = rabbitmq_vhost.rmqvhost.name
-
   definition {
-    uri = "amqp://rabbit:rabbit@rabbitmq2:5672/vhost"
+    uri = "amqp://${rabbitmq_user.federation.name}:${rabbitmq_user.federation.password}@rabbitmq2:5672/vhost"
     prefetch_count = 1000
     reconnect_delay = 5
     ack_mode = "on-confirm"
     trust_user_id = false
     max_hops = 1
   }
+  depends_on = [
+    rabbitmq_user.federation
+  ]
 }
 
 resource "rabbitmq_policy" "exchange_policy" {
