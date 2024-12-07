@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.3'
 services:
   rabbitmq1:
     build: ./var/rabbitmq
@@ -43,7 +43,7 @@ services:
       - .erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
     env_file: .env
   prometheus:
-    image: prom/prometheus:v2.1.0
+    image: prom/prometheus:v2.35.0
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"

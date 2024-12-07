@@ -1,6 +1,6 @@
 # RabbitMQ
 
-This repository provides you with the opportunity to experiment with RabbitMQ 3.12.0 and gain a better understanding of how Clustering, Federation, and Shovel plugins function.  
+This repository provides you with the opportunity to experiment with RabbitMQ 4.0.4 and gain a better understanding of how Clustering, Federation, and Shovel plugins function.  
 
 # Docker
 
